@@ -1,4 +1,7 @@
 $(document).ready(function () {
+  // Only run on pages that have the map (e.g. not the About page)
+  if (!document.getElementById('map')) return;
+
   $('#building').select2({
     placeholder: "-- Select Building --",
     allowClear: true,
@@ -96,7 +99,7 @@ $(document).ready(function () {
 
   L.esri
     .featureLayer({
-      url: 'https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/Parking2020/FeatureServer/0'
+      url: 'https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/SurfaceParkingLots/FeatureServer/0'
     })
     .query()
     .where('1=1')
@@ -124,7 +127,7 @@ $(document).ready(function () {
             const googleMapsURL = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
 
             layer.bindPopup(`
-              <b>${props.LOT_NAME || 'Parking Lot'}</b><br>
+              <b>${props.LotName || props.LOT_NAME || 'Parking Lot'}</b><br>
               Type: ${types.join(', ')}<br>
               Description: ${props.LotDesc || 'Not Available'}<br>
               <a href="${googleMapsURL}" target="_blank" rel="noopener">Get Directions</a>
@@ -189,50 +192,67 @@ $(document).ready(function () {
   let selectedBuildingAbbr = null;
   let buildingFeatures = [];
 
-  buildingLayer = L.esri.featureLayer({
-    url: 'https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/Export_Output106/FeatureServer/0',
-    style: feature => {
-      const abbr = feature.properties.BLDG_ABBR;
-      const isSelected = abbr === selectedBuildingAbbr;
-      return {
-        color: isSelected ? '#0000ff' : '#666',
-        weight: isSelected ? 2 : 0.5,
-        opacity: isSelected ? 1 : 0.6
-      };
-    },
-    onEachFeature: (feature, layer) => {
-      buildingFeatures.push({ feature, layer });
-    }
-  }).addTo(map);
+  function buildingStyle(feature) {
+    const isSelected = feature.properties.BLDG_ABBR === selectedBuildingAbbr;
+    return {
+      color: isSelected ? '#0000ff' : '#666',
+      weight: isSelected ? 2 : 0.5,
+      opacity: isSelected ? 1 : 0.6
+    };
+  }
 
-  buildingLayer.on('load', () => {
-    buildingSelect.innerHTML = '';
-    const sorted = buildingFeatures
-      .map(b => b.feature)
-      .filter(f => f.properties.BLDG_ABBR && f.properties.BUILDING_N)
-      .sort((a, b) => a.properties.BLDG_ABBR.localeCompare(b.properties.BLDG_ABBR));
+  // Load every campus building in one query so the dropdown lists all of them
+  L.esri
+    .query({ url: 'https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/BuildingShapes_view/FeatureServer/0' })
+    .where('1=1')
+    .fields(['BLDG_ABBR', 'BUILDING_N'])
+    .run((error, featureCollection) => {
+      if (error) {
+        console.error('Error loading building data:', error);
+        return;
+      }
 
-    const defaultOpt = document.createElement('option');
-    defaultOpt.value = '';
-    defaultOpt.textContent = '-- Select Building --';
-    buildingSelect.appendChild(defaultOpt);
+      buildingLayer = L.geoJSON(featureCollection, {
+        style: buildingStyle,
+        onEachFeature: (feature, layer) => {
+          buildingFeatures.push({ feature, layer });
+          const p = feature.properties;
+          if (p.BUILDING_N) {
+            layer.bindTooltip(p.BLDG_ABBR ? `(${p.BLDG_ABBR}) ${p.BUILDING_N}` : p.BUILDING_N);
+          }
+        }
+      }).addTo(map);
+      buildingLayer.bringToBack();
 
-    const maxLength = 35;
+      buildingSelect.innerHTML = '';
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = '';
+      defaultOpt.textContent = '-- Select Building --';
+      buildingSelect.appendChild(defaultOpt);
 
-    sorted.forEach(feature => {
-      const abbr = feature.properties.BLDG_ABBR;
-      const name = feature.properties.BUILDING_N;
-      const option = document.createElement('option');
-      option.value = abbr;
-      const displayName = `(${abbr}) ${name}`;
-      option.title = displayName;
-      option.textContent = displayName.length > maxLength
-        ? displayName.slice(0, maxLength) + '…'
-        : displayName;
-      buildingSelect.appendChild(option);
+      const maxLength = 35;
+      const seen = new Set();
+      buildingFeatures
+        .map(b => b.feature)
+        .filter(f => f.properties.BLDG_ABBR && f.properties.BUILDING_N)
+        .sort((a, b) => a.properties.BLDG_ABBR.localeCompare(b.properties.BLDG_ABBR))
+        .forEach(feature => {
+          const abbr = feature.properties.BLDG_ABBR;
+          if (seen.has(abbr)) return;
+          seen.add(abbr);
+          const option = document.createElement('option');
+          option.value = abbr;
+          const displayName = `(${abbr}) ${feature.properties.BUILDING_N}`;
+          option.title = displayName;
+          option.textContent = displayName.length > maxLength
+            ? displayName.slice(0, maxLength) + '…'
+            : displayName;
+          buildingSelect.appendChild(option);
+        });
+      $('#building').trigger('change.select2');
     });
-      $('#building').on('change', buildingChanged);
-  });
+
+  $('#building').on('change', buildingChanged);
 
   function getDistance(latlng1, latlng2) {
     return map.distance(latlng1, latlng2);
@@ -246,7 +266,7 @@ $(document).ready(function () {
     let buildingCenter = null;
 
     if (selectedAbbr && buildingLayer) {
-      buildingLayer.eachFeature(layer => {
+      buildingLayer.eachLayer(layer => {
         const props = layer.feature?.properties;
         if (props?.BLDG_ABBR === selectedAbbr) {
           buildingCenter = layer.getBounds().getCenter();
@@ -298,17 +318,28 @@ $(document).ready(function () {
     popupAnchor: [0, -20]
   });
 
-  let handicapLayer = null;
-  handicapLayer = omnivore.kml('https://purdueuniversity.maps.arcgis.com/sharing/rest/content/items/13158cca51cf4190aaa002bde42f816d/data')
-    .on('ready', function () {
-      this.eachLayer(function (layer) {
-        if (layer instanceof L.Marker) {
-          layer.setIcon(handicapIcon);
-          layer.bindPopup('Handicap Accessible Parking');
-        }
-      });
-    })
-    .addTo(map);
+  // Accessible (handicap) parking spaces from Purdue's HandicapVehicleSpaces layer
+  const handicapLayer = L.geoJSON(null, {
+    pointToLayer: (feature, latlng) => L.marker(latlng, { icon: handicapIcon }),
+    onEachFeature: (feature, layer) => {
+      const lot = feature.properties.LOT_NAME;
+      layer.bindPopup(`Accessible Parking Space${lot ? '<br>Lot: ' + lot : ''}`);
+    }
+  });
+  L.esri
+    .query({ url: 'https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/HandicapVehicleSpaces/FeatureServer/0' })
+    .where('1=1')
+    .fields(['LOT_NAME'])
+    .run((error, featureCollection) => {
+      if (error) {
+        console.error('Error loading accessible parking data:', error);
+        return;
+      }
+      handicapLayer.addData(featureCollection);
+    });
+  if (document.getElementById('handicapToggle')?.checked) {
+    handicapLayer.addTo(map);
+  }
 
 
 function buildingChanged() {
@@ -328,7 +359,7 @@ function buildingChanged() {
   }
 
   // Force style update to highlight selected
-  buildingLayer.setStyle(buildingLayer.options.style);
+  if (buildingLayer) buildingLayer.setStyle(buildingStyle);
   filterParking();
 }
 
@@ -343,8 +374,10 @@ function buildingChanged() {
     }
   }
   
+  // Expose for the inline onclick on the "Find Parking" button
+  window.filterParking = filterParking;
+
   // Bind event listeners after defining functions
   passTypeSelect.addEventListener('change', filterParking);
   document.getElementById('handicapToggle')?.addEventListener('change', toggleHandicapParking);
 });
-
