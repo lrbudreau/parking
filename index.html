@@ -1,28 +1,29 @@
 ---
 layout: default
-title: Purdue Parking Map
+title: Purdue Parking Finder
 ---
 <div id="controls">
-  <label>Pass Type: 
-    <select id="passType">
-      <option value="">-- Select Pass Type --</option>
-    </select>
-  </label>
-
-  <label for="building">Destination Building:</label>
-  <select id="building" class="select2">
-    <option value="">-- Select Building --</option>
+  <label for="passType">Pass type</label>
+  <select id="passType">
+    <option value="">All pass types</option>
   </select>
 
-  <label>
-    Handicap Parking:
-    <input type="checkbox" id="handicapToggle" checked>
-  </label>
+  <label for="building">Going to</label>
+  <select id="building">
+    <option value=""></option>
+  </select>
 
-  <button onclick="filterParking()">Find Parking</button>
+  <button type="button" id="locateButton">Use my location</button>
+
+  <label class="checkbox">
+    <input type="checkbox" id="accessibleToggle" checked>
+    Show accessible parking
+  </label>
 </div>
 
-<div id="noLotsMessage">No matching lots found.</div>
-<div id="map"></div>
+<div id="statusMessage" role="status" hidden></div>
 
-
+<div class="map-layout">
+  <div id="map"></div>
+  <aside id="results" aria-live="polite" hidden></aside>
+</div>

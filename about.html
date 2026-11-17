@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Purdue Parking Map
+title: About – Purdue Parking Finder
 ---
 
 <div class="container">
@@ -21,18 +21,21 @@ title: Purdue Parking Map
     <p>Users can:</p>
     <ul>
       <li>View real-time parking lot and campus building data</li>
-      <li>Filter parking types by category</li>
-      <li>Access directions and explore campus layout interactively</li>
+      <li>Filter lots by the parking pass they hold</li>
+      <li>Pick a building, or use their current location, to see the closest lots with walking distances</li>
+      <li>Show accessible parking spaces and get directions to any lot</li>
     </ul>
   
     <h3>📍 Data Sources</h3>
     <p>All geospatial data is publicly available and accessed directly from Purdue University’s ArcGIS Online portal:</p>
     <ul>
-      <li><a href="https://www.arcgis.com/home/item.html?id=XXXXXX" target="_blank" rel="noopener">Purdue Campus Buildings</a> <em>(Feature Layer)</em></li>
-      <li><a href="https://www.arcgis.com/home/item.html?id=XXXXXX" target="_blank" rel="noopener">Parking 2020 – Lots & Garages</a> <em>(Feature Layer)</em></li>
+      <li><a href="https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/BuildingShapes_view/FeatureServer/0" target="_blank" rel="noopener">Purdue Campus Buildings</a> <em>(Feature Layer)</em></li>
+      <li><a href="https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/SurfaceParkingLots/FeatureServer/0" target="_blank" rel="noopener">Surface Parking Lots</a> <em>(Feature Layer)</em></li>
+      <li><a href="https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/HandicapVehicleSpaces/FeatureServer/0" target="_blank" rel="noopener">Accessible Parking Spaces</a> <em>(Feature Layer)</em></li>
     </ul>
+    <p>The Wood Street, Northwestern Avenue and University Street garages aren’t in Purdue’s lot layer, so their approximate outlines are drawn from a small file in this project (<code>data/garages.geojson</code>).</p>
     <blockquote>
-      These datasets are integrated live using Esri’s FeatureService endpoints.
+      Purdue’s layers are loaded live from Esri FeatureService endpoints each time the map opens.
     </blockquote>
   
     <h3>🔧 Technologies Used</h3>

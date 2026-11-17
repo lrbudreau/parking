@@ -1,4 +1,4 @@
-Purdue University Dynamic Parking Map - https://lrbudreau.github.io/parking/
+Purdue Parking Finder - https://lrbudreau.github.io/parking/
 
 This is a personal project designed to help me learn more about geospatial data, Leaflet.js, and working with GeoJSON and ArcGIS Feature Layers.
 While the application displays real data from Purdue University, it is not affiliated with or maintained by Purdue University.
@@ -16,10 +16,17 @@ All building and parking location data is sourced from publicly available datase
 Purdue Campus Buildings
 [View on ArcGIS](https://purdueuniversity.maps.arcgis.com/home/item.html?id=5646e36cfdd84fd5804dd14235844ed7)
 
-Parking 2020 (Parking Lots & Garages)
-[View on ArcGIS](https://purdueuniversity.maps.arcgis.com/home/item.html?id=f8c18c54bcc14eff92a48c1ad1688e8e)
+Surface Parking Lots (includes Grant Street, Harrison Street and McCutcheon Drive garages)
+[FeatureServer](https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/SurfaceParkingLots/FeatureServer/0)
+
+Accessible Parking Spaces
+[FeatureServer](https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/HandicapVehicleSpaces/FeatureServer/0)
 
 These datasets are accessed live through their respective FeatureService endpoints.
+
+Garages not in Purdue's lot layer (Wood Street, Northwestern Avenue, University Street) are drawn from `data/garages.geojson`; their outlines are approximate. Temporary construction closures go in `data/construction.geojson` (entries disappear automatically after their `endDate`).
+
+Readable names for Purdue's lot permit codes live in the `PERMIT_LABELS` table at the top of `_assets/js/parking-map.js`. Codes without an entry are shown as-is.
 
 ⚠️ Disclaimer
 

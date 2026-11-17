@@ -1,0 +1,122 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Wood Street Parking Garage",
+        "type": [
+          "A",
+          "SG"
+        ],
+        "free": false,
+        "address": "120 S Grant St, West Lafayette, IN 47906"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -86.90979155427932,
+              40.422348649758675
+            ],
+            [
+              -86.90979155427932,
+              40.4233747667096
+            ],
+            [
+              -86.91022378725243,
+              40.4233747667096
+            ],
+            [
+              -86.91022378725243,
+              40.422348649758675
+            ],
+            [
+              -86.90979155427932,
+              40.422348649758675
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Northwestern Avenue Parking Garage",
+        "type": [
+          "A",
+          "SG"
+        ],
+        "free": false,
+        "address": "504 Northwestern Ave, West Lafayette, IN 47906"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -86.9105634432711,
+              40.429301982149894
+            ],
+            [
+              -86.9105634432711,
+              40.4300053262609
+            ],
+            [
+              -86.91199398690655,
+              40.4300053262609
+            ],
+            [
+              -86.91199398690655,
+              40.429301982149894
+            ],
+            [
+              -86.9105634432711,
+              40.429301982149894
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "University Street Parking Garage",
+        "type": [
+          "A",
+          "SG"
+        ],
+        "free": false,
+        "address": "University St, West Lafayette, IN 47907"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -86.91683768201963,
+              40.42632158841516
+            ],
+            [
+              -86.91683768201963,
+              40.42714635766893
+            ],
+            [
+              -86.91775698219192,
+              40.42714635766893
+            ],
+            [
+              -86.91775698219192,
+              40.42632158841516
+            ],
+            [
+              -86.91683768201963,
+              40.42632158841516
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
