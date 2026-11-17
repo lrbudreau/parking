@@ -1,4 +1,4 @@
-title: Purdue Parking Map
+title: Purdue Parking Finder
 baseurl: "/parking"
 include:
   - "_assets"
