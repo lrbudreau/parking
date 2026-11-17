@@ -1,4 +1,4 @@
-Purdue University Dynamic Parking Map
+Purdue University Dynamic Parking Map - https://lrbudreau.github.io/parking/
 
 This is a personal project designed to help me learn more about geospatial data, Leaflet.js, and working with GeoJSON and ArcGIS Feature Layers.
 While the application displays real data from Purdue University, it is not affiliated with or maintained by Purdue University.
