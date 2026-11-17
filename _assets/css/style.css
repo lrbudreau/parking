@@ -111,7 +111,7 @@ footer a {
 }
 
 #controls select,
-#controls button {
+#controls #locateButton {
   font: inherit;
   padding: 4px 8px;
   min-height: 32px;
@@ -120,14 +120,14 @@ footer a {
   background: #fff;
 }
 
-#controls button {
+#controls #locateButton {
   cursor: pointer;
   background: #cfb991; /* Purdue gold */
   border-color: #8e6f3e;
   font-weight: 600;
 }
 
-#controls button:disabled {
+#controls #locateButton:disabled {
   opacity: 0.6;
   cursor: wait;
 }
